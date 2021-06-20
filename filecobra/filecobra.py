@@ -43,7 +43,7 @@ def move(url, new_url):
         os.rename(url, new_url)
 
 def rename(url, new_name):
-    """]
+    """
     moves file to a new location
     ------------------
     url -> path of the file
