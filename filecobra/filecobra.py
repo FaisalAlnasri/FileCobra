@@ -49,6 +49,7 @@ def rename(url, new_name):
     url -> path of the file
     new_name -> the name you want the file to be
     """
+    # TODO: optimise the code below
     url_path_names = url.split('\\')
     if len(url_path_names) >= 2:
         name = '\\'.join(url_path_names[:-1]) + '\\' + new_name # replace the orignal file name with the new name
