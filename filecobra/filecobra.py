@@ -1,7 +1,7 @@
 import os
 from errors import *
 
-def create(url, is_dir = False, overwrite=False, contents = ''):
+def create(url, is_dir=False, overwrite=False, contents = ''):
     """
     adds a new empty file/directory in a specifed path
     ------------------
@@ -20,7 +20,7 @@ def create(url, is_dir = False, overwrite=False, contents = ''):
 
 def delete(url):
     """
-    deletes a file/directory in a specifed path
+    deletes a file/directory in a path
     ------------------
     url -> path of the file
     """
@@ -49,10 +49,9 @@ def rename(url, new_name):
     url -> path of the file
     new_name -> the name you want the file to be
     """
-    # TODO: optimise the code below
-    url_path_names = url.split('\\')
-    if len(url_path_names) >= 2:
-        name = '\\'.join(url_path_names[:-1]) + '\\' + new_name # replace the orignal file name with the new name
+    url_names = url.split('\\')
+    if len(url_names) >= 2:
+        name = '\\'.join(url_names[:-1]) + '\\' + new_name # replace the orignal file name with the new name
     else:
         name = new_name
 
@@ -66,6 +65,31 @@ def check(url) -> bool:
     url -> path of the file
     """
     return os.path.isfile(url) or os.path.isdir(url)
+
+def listfiles(url='', list_files=True, list_dirs=True) -> list:
+    """
+    lists files/directories in a path
+    ------------------
+    url -> path of the file
+    list_files -> True if you want to include files
+    list_dirs -> True if you want to include directories
+    """
+    list_ = []
+    if not list_files and not list_dirs: # if an idiot made them both false
+        return list_
+        
+    if url == '':
+        list_ = os.listdir()
+    else:
+        list_ = os.listdir(url)
+
+    if not list_files:
+        list_ = [l for l in list_ if not '.' in l]
+    elif not list_dirs:
+        list_ = [l for l in list_ if '.' in l]
+    
+    return list_
+
 
 if __name__ == "__main__":
     # for testing purposes
