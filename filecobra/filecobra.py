@@ -1,5 +1,5 @@
 import os
-from errors import *
+import errors
 
 def create(url, is_dir=False, overwrite=False, contents = ''):
     """
@@ -30,7 +30,19 @@ def delete(url):
         try:
             os.rmdir(url)
         except OSError:
-            raise DirectoryNotEmpty("cant delete directory, must be empty")
+            raise errors.DirectoryNotEmpty("cant delete directory, must be empty")
+            
+def delete_extension(url, extension):
+    """
+    deletes multiple files with same the extension in a path
+    ------------------
+    url -> path of the file's parent
+    extension -> extension of file (Ex: '.py')
+    """
+    for f in os.listdir(url):
+        if '.' in f:
+            if f[f.index('.'):] == extension:
+                os.remove(url + "\\" + f)
 
 def move(url, new_url):
     """
@@ -41,6 +53,24 @@ def move(url, new_url):
     """
     if not os.path.isfile(new_url):
         os.rename(url, new_url)
+
+def move_extension(url, new_url, extension):
+    """
+    moves multiple files with the same extension to a new location
+    ------------------
+    url -> current path of the file
+    new_url -> new path of the file
+    extension -> extension of file (Ex: '.py')
+    """
+    for f in os.listdir(url):
+        if '.' in f: # checks if its a file and not a directory
+            if f[f.index('.'):] == extension:
+                if not os.path.isfile(new_url):
+                    if new_url == '':
+                        os.rename(url + "\\" + f, f)
+                    else:
+                        os.rename(url + "\\" + f, new_url + "\\" + f)
+    
 
 def rename(url, new_name):
     """
@@ -60,7 +90,7 @@ def rename(url, new_name):
 
 def check(url) -> bool:
     """
-    return True if a file/directorys exists
+    return True if a file/directory exists
     ------------------
     url -> path of the file
     """
