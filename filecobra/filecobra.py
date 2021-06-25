@@ -1,36 +1,37 @@
 import os
 import errors
 
-def create(url, is_dir=False, overwrite=False, contents = ''):
+def create(*urls, is_dir=False, overwrite=False):
     """
     adds a new empty file/directory in a specifed path
     ------------------
-    url -> path of the file
+    urls -> path of file/s
     is_dir -> True if you want to make a directory, False by default
     overwrite -> True if you want to overwrite existing file.
-    contents -> the contents you want the file to have
     """
     if is_dir:
-        if not os.path.isdir(url):
-            os.mkdir(url)
+        for url in urls:
+            if not os.path.isdir(url):
+                os.mkdir(url)
     else:
-        if not os.path.isfile(url) or overwrite:
-            f = open(url, 'w')
-            f.write(contents)
+        for url in urls:
+            if not os.path.isfile(url) or overwrite:
+                open(url, 'w')
 
-def delete(url):
+def delete(*urls):
     """
     deletes a file/directory in a path
     ------------------
-    url -> path of the file
+    urls -> path of file/s
     """
-    if os.path.isfile(url):
-        os.remove(url)
-    elif os.path.isdir(url):
-        try:
-            os.rmdir(url)
-        except OSError:
-            raise errors.DirectoryNotEmpty("cant delete directory, must be empty")
+    for url in urls:
+        if os.path.isfile(url):
+            os.remove(url)
+        elif os.path.isdir(url):
+            try:
+                os.rmdir(url)
+            except OSError:
+                raise errors.DirectoryNotEmpty("cant delete directory, must be empty")
             
 def delete_extension(url, extension):
     """
@@ -44,15 +45,20 @@ def delete_extension(url, extension):
             if f[f.index('.'):] == extension:
                 os.remove(url + "\\" + f)
 
-def move(url, new_url):
+# TODO: fix move function
+def move(*urls, new_url):
     """
     moves file to a new location
     ------------------
-    url -> current path of the file
-    new_url -> new path of the file
+    urls -> current path of file/s
+    new_url -> new path of file/s (leave empty if you want it to be your current)
     """
-    if not os.path.isfile(new_url):
-        os.rename(url, new_url)
+    for url in urls:
+        if not os.path.isfile(new_url):
+            if new_url == '':
+                os.rename(url, new_url + url)
+            else: 
+                os.rename(url, new_url + "\\" + url)
 
 def move_extension(url, new_url, extension):
     """
@@ -72,21 +78,23 @@ def move_extension(url, new_url, extension):
                         os.rename(url + "\\" + f, new_url + "\\" + f)
     
 
-def rename(url, new_name):
+# TODO: fix rename function
+def rename(**kwargs):
     """
-    moves file to a new location
+    renames multiple files
     ------------------
-    url -> path of the file
-    new_name -> the name you want the file to be
+    kwargs -> change the names like this:
+    rename("test.txt" = "new.txt", "main.c" = "main.py")
     """
-    url_names = url.split('\\')
-    if len(url_names) >= 2:
-        name = '\\'.join(url_names[:-1]) + '\\' + new_name # replace the orignal file name with the new name
-    else:
-        name = new_name
+    for url, new_name in kwargs.items():
+        url_names = url.split('\\')
+        if len(url_names) >= 2:
+            name = '\\'.join(url_names[:-1]) + '\\' + new_name # replace the orignal file name with the new name
+        else:
+            name = new_name
 
-    if os.path.isfile(url):
-        os.rename(url, name)
+        if os.path.isfile(url):
+            os.rename(url, name)
 
 def check(url) -> bool:
     """
