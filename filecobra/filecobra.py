@@ -1,5 +1,6 @@
 import os
 import errors
+import re
 
 def create(*urls, is_dir=False, overwrite=False):
     """
@@ -43,7 +44,7 @@ def delete_extension(url, extension):
     for f in os.listdir(url):
         if '.' in f:
             if f[f.index('.'):] == extension:
-                os.remove(url + "\\" + f)
+                os.remove(url + "/" + f)
 
 # TODO: fix move function
 def move(*urls, new_url):
@@ -54,18 +55,23 @@ def move(*urls, new_url):
     new_url -> new path of file/s (leave empty if you want it to be your current)
     """
     for url in urls:
+        pattern = re.compile(r'[a-zA-Z\.]+$')
+        match = pattern.findall(url)[0]
         if not os.path.isfile(new_url):
             if new_url == '':
-                os.rename(url, new_url + url)
+                os.rename(url, match)
             else: 
-                os.rename(url, new_url + "\\" + url)
+                if '/' in new_url:
+                    os.rename(url, new_url + match)
+                else:
+                    os.rename(url, new_url + "/" + url)
 
 def move_extension(url, new_url, extension):
     """
     moves multiple files with the same extension to a new location
     ------------------
-    url -> current path of the file
-    new_url -> new path of the file
+    url -> current path of the file's parent
+    new_url -> new path of the file's parent
     extension -> extension of file (Ex: '.py')
     """
     for f in os.listdir(url):
@@ -73,28 +79,27 @@ def move_extension(url, new_url, extension):
             if f[f.index('.'):] == extension:
                 if not os.path.isfile(new_url):
                     if new_url == '':
-                        os.rename(url + "\\" + f, f)
+                        os.rename(url + "/" + f, f)
                     else:
-                        os.rename(url + "\\" + f, new_url + "\\" + f)
+                        os.rename(url + "/" + f, new_url + "/" + f)
     
 
 # TODO: fix rename function
-def rename(**kwargs):
+def rename(url, new_name):
     """
     renames multiple files
     ------------------
-    kwargs -> change the names like this:
-    rename("test.txt" = "new.txt", "main.c" = "main.py")
+    url -> current path of file
+    new_name -> new name of file
     """
-    for url, new_name in kwargs.items():
-        url_names = url.split('\\')
-        if len(url_names) >= 2:
-            name = '\\'.join(url_names[:-1]) + '\\' + new_name # replace the orignal file name with the new name
-        else:
-            name = new_name
+    url_names = url.split('/')
+    if len(url_names) >= 2:
+        name = '/'.join(url_names[:-1]) + '/' + new_name # replace the orignal file name with the new name
+    else:
+        name = new_name
 
-        if os.path.isfile(url):
-            os.rename(url, name)
+    if os.path.isfile(url):
+        os.rename(url, name)
 
 def check(url) -> bool:
     """
@@ -131,4 +136,4 @@ def listfiles(url='', list_files=True, list_dirs=True) -> list:
 
 if __name__ == "__main__":
     # for testing purposes
-    pass
+    rename("test/wef.t", "test.t")
