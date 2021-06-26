@@ -134,4 +134,4 @@ def listfiles(url='', list_files=True, list_dirs=True) -> list:
 
 if __name__ == "__main__":
     # for testing purposes
-    rename("test/wef.t", "test.t")
+    pass
