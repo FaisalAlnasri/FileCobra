@@ -46,7 +46,6 @@ def delete_extension(url, extension):
             if f[f.index('.'):] == extension:
                 os.remove(url + "/" + f)
 
-# TODO: fix move function
 def move(*urls, new_url):
     """
     moves file to a new location
@@ -84,7 +83,6 @@ def move_extension(url, new_url, extension):
                         os.rename(url + "/" + f, new_url + "/" + f)
     
 
-# TODO: fix rename function
 def rename(url, new_name):
     """
     renames multiple files
