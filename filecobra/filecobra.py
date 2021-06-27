@@ -2,13 +2,14 @@ import os
 import errors
 import re
 
-def create(*urls, is_dir=False, overwrite=False):
+def create(*urls, is_dir=False, overwrite=False, contents=''):
     """
     adds a new empty file/directory in a specifed path
     ------------------
-    urls -> path of file/s
+    urls -> path of file(s)
     is_dir -> True if you want to make a directory, False by default
     overwrite -> True if you want to overwrite existing file.
+    contents -> the contents you want to store in the new file(s)
     """
     if is_dir:
         for url in urls:
@@ -17,13 +18,14 @@ def create(*urls, is_dir=False, overwrite=False):
     else:
         for url in urls:
             if not os.path.isfile(url) or overwrite:
-                open(url, 'w')
+                f = open(url, 'w')
+                f.write(contents)
 
 def delete(*urls):
     """
     deletes a file/directory in a path
     ------------------
-    urls -> path of file/s
+    urls -> path of file(s)
     """
     for url in urls:
         if os.path.isfile(url):
@@ -50,8 +52,8 @@ def move(*urls, new_url):
     """
     moves file to a new location
     ------------------
-    urls -> current path of file/s
-    new_url -> new path of file/s (leave empty if you want it to be your current)
+    urls -> current path of file(s)
+    new_url -> new path of file(s) (leave empty if you want it to be your current)
     """
     for url in urls:
         pattern = re.compile(r'[a-zA-Z\.]+$')
@@ -131,7 +133,38 @@ def listfiles(url='', list_files=True, list_dirs=True) -> list:
     
     return list_
 
+def read(*urls):
+    """
+    reads multiple/single file(s) and returns a list or string
+    ------------------
+    urls -> current path of file(s)
+    """
+    if len(urls) == 1:
+        f = open(urls[0], 'r')
+        return f.read()
+    else:
+        res = []
+        for url in urls:
+            f = open(url, 'r')
+            res.append(f.read())
+        return res
+
+def write(url, contents, append_mode=True):
+    """
+    writes to a file
+    ------------------
+    url -> path of the file
+    append_mode -> True if you want to add text, false if you want overwrite the file
+    """
+    if append_mode:
+        f = open(url, 'a')
+        f.write(contents)
+    else:
+        f = open(url, 'w')
+        f.write(contents)
+
 
 if __name__ == "__main__":
     # for testing purposes
-    pass
+    contents = read("test.txt", "te.txt")
+    print(contents)
